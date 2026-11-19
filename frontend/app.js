@@ -269,11 +269,11 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
           const events = data.calendar.events || [];
           if (events.length === 0) {
-            briefingCalendarText.textContent = "Schedule: No events today.";
+            briefingCalendarText.textContent = "Calendar: 0 events today";
           } else {
             const nextEv = events[0];
             const startT = nextEv.start_time ? formatIsoTime(nextEv.start_time) : "";
-            briefingCalendarText.textContent = `Next event: ${nextEv.title}${startT ? " at " + startT : ""}`;
+            briefingCalendarText.textContent = `Event: ${nextEv.title}${startT ? " (" + startT + ")" : ""}`;
           }
         }
       }
@@ -284,28 +284,20 @@ document.addEventListener("DOMContentLoaded", () => {
           briefingGmailText.textContent = "Gmail: not connected";
         } else {
           const count = data.gmail.count || 0;
-          briefingGmailText.textContent = `Inbox: ${count} recent ${count === 1 ? "email" : "emails"}`;
+          briefingGmailText.textContent = `Inbox: ${count} new`;
         }
       }
 
       // Approvals line
       if (briefingApprovalsText) {
         const count = data.pending_approvals_count || 0;
-        if (count === 0) {
-          briefingApprovalsText.textContent = "Approvals: No pending approvals.";
-        } else {
-          briefingApprovalsText.textContent = `Approvals: ${count} pending action${count === 1 ? "" : "s"} awaiting review`;
-        }
+        briefingApprovalsText.textContent = `Approvals: ${count}`;
       }
 
       // Reminders line
       if (briefingRemindersText) {
         const dueCount = data.due_reminders_count || 0;
-        if (dueCount === 0) {
-          briefingRemindersText.textContent = "Reminders: No due reminders.";
-        } else {
-          briefingRemindersText.textContent = `Reminders: ${dueCount} reminder${dueCount === 1 ? "" : "s"} due now`;
-        }
+        briefingRemindersText.textContent = `Reminders: ${dueCount} due`;
       }
 
       // Expenses month total
@@ -974,33 +966,39 @@ document.addEventListener("DOMContentLoaded", () => {
         const details = document.createElement("div");
         details.className = "email-details";
 
-        const meta = document.createElement("div");
-        meta.className = "email-meta";
+        const topRow = document.createElement("div");
+        topRow.className = "email-top-row";
 
         const senderSpan = document.createElement("span");
         senderSpan.className = "email-sender";
         senderSpan.textContent = em.sender;
 
         const timeSpan = document.createElement("span");
+        timeSpan.className = "email-time";
         timeSpan.textContent = em.time ? formatIsoTime(parseInt(em.time)) : "";
 
-        meta.appendChild(senderSpan);
-        meta.appendChild(timeSpan);
+        topRow.appendChild(senderSpan);
+        topRow.appendChild(timeSpan);
 
-        const subj = document.createElement("div");
+        const previewBlock = document.createElement("div");
+        previewBlock.className = "email-preview-block";
+
+        const subj = document.createElement("span");
         subj.className = "email-subject";
-        subj.textContent = em.subject;
+        subj.textContent = em.subject ? em.subject + (em.snippet ? " — " : "") : "";
 
-        const snippet = document.createElement("div");
+        const snippet = document.createElement("span");
         snippet.className = "email-snippet";
-        snippet.textContent = em.snippet;
+        snippet.textContent = em.snippet || "";
 
-        details.appendChild(meta);
-        details.appendChild(subj);
-        details.appendChild(snippet);
+        previewBlock.appendChild(subj);
+        previewBlock.appendChild(snippet);
+
+        details.appendChild(topRow);
+        details.appendChild(previewBlock);
 
         const actionsDiv = document.createElement("div");
-        actionsDiv.className = "approval-actions";
+        actionsDiv.className = "email-actions";
 
         const draftBtn = document.createElement("button");
         draftBtn.type = "button";
@@ -1869,6 +1867,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // Render Messages
   // -------------------------------------------------------------------------
   function appendUserMessage(text) {
+    const placeholder = document.getElementById("chatPlaceholder");
+    if (placeholder) placeholder.remove();
+
     const el = document.createElement("div");
     el.className = "chat-message user";
 
@@ -1882,6 +1883,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function appendAuraReply(text, timestamp = formatTimestamp()) {
+    const placeholder = document.getElementById("chatPlaceholder");
+    if (placeholder) placeholder.remove();
+
     const el = document.createElement("div");
     el.className = "chat-message assistant";
 
@@ -1897,13 +1901,13 @@ document.addEventListener("DOMContentLoaded", () => {
     el.appendChild(content);
     chatTranscript.appendChild(el);
 
-    if (lastReply) {
-      lastReply.textContent = text;
-    }
     scrollToBottom();
   }
 
   function appendSystemNote(text) {
+    const placeholder = document.getElementById("chatPlaceholder");
+    if (placeholder) placeholder.remove();
+
     const el = document.createElement("div");
     el.className = "chat-message system-note";
 
@@ -1917,6 +1921,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function appendErrorMessage(errorText) {
+    const placeholder = document.getElementById("chatPlaceholder");
+    if (placeholder) placeholder.remove();
+
     const el = document.createElement("div");
     el.className = "chat-message assistant error";
 
@@ -1935,6 +1942,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function showThinking() {
+    const placeholder = document.getElementById("chatPlaceholder");
+    if (placeholder) placeholder.remove();
+
     const el = document.createElement("div");
     el.className = "chat-message thinking";
     el.id = "thinkingIndicator";
@@ -1947,16 +1957,16 @@ document.addEventListener("DOMContentLoaded", () => {
   function removeThinking() {
     const el = document.getElementById("thinkingIndicator");
     if (el) el.remove();
+    const texts = LANGUAGE_TEXTS[currentLanguage] || LANGUAGE_TEXTS["en-IN"];
     if (voiceState && voiceState.textContent === "Thinking…") {
-      voiceState.textContent = "Ready";
+      voiceState.textContent = texts.ready;
     }
   }
 
   function scrollToBottom() {
-    window.scrollTo({
-      top: document.body.scrollHeight,
-      behavior: "smooth"
-    });
+    if (chatTranscript) {
+      chatTranscript.scrollTop = chatTranscript.scrollHeight;
+    }
   }
 
   // -------------------------------------------------------------------------

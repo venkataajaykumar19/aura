@@ -7,10 +7,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=2">
 </head>
 <body>
-  <!-- Top Bar: 56px, thin 1px border -->
+  <!-- Top Bar: Single 880px max-width container, sticky -->
   <header class="top-bar">
     <div class="top-bar-inner">
       <div class="brand">
@@ -39,9 +39,9 @@
     </div>
   </header>
 
-  <!-- Main Area: max-width 880px, centred -->
+  <!-- Main Area: Single 880px max-width container, centred -->
   <main class="main-layout">
-    <!-- Voice-First Hero -->
+    <!-- Compact Voice Hero -->
     <section class="voice-hero">
       <div class="voice-state" id="voiceState">Ready</div>
       
@@ -56,41 +56,32 @@
       </div>
 
       <div class="live-transcript" id="liveTranscript"></div>
-      <div class="last-reply" id="lastReply"></div>
     </section>
 
-    <!-- Daily Briefing Panel (Below Voice Hero) -->
-    <section class="briefing-card" id="briefingPanel">
-      <div class="briefing-header">
-        <span class="briefing-title">Daily Briefing</span>
-        <span class="briefing-date" id="briefingDate">Loading date…</span>
-      </div>
-      <div class="briefing-lines">
-        <div class="briefing-row" id="briefingCalendarRow">
-          <span class="briefing-indicator"></span>
-          <span class="briefing-text" id="briefingCalendarText">Next event: checking schedule…</span>
-        </div>
-        <div class="briefing-row" id="briefingGmailRow">
-          <span class="briefing-indicator"></span>
-          <span class="briefing-text" id="briefingGmailText">Inbox: checking emails…</span>
-        </div>
-        <div class="briefing-row" id="briefingApprovalsRow">
-          <span class="briefing-indicator"></span>
-          <span class="briefing-text" id="briefingApprovalsText">Approvals: checking pending actions…</span>
-        </div>
-        <div class="briefing-row" id="briefingRemindersRow">
-          <span class="briefing-indicator"></span>
-          <span class="briefing-text" id="briefingRemindersText">Reminders: checking tasks…</span>
-        </div>
+    <!-- Concise Daily Briefing Bar -->
+    <section class="briefing-bar" id="briefingPanel">
+      <div class="briefing-bar-inner">
+        <span class="briefing-date-badge" id="briefingDate">Today</span>
+        <span class="briefing-chip" id="briefingCalendarText">Calendar: checking…</span>
+        <span class="briefing-chip" id="briefingGmailText">Gmail: checking…</span>
+        <span class="briefing-chip" id="briefingRemindersText">Reminders: checking…</span>
+        <span class="briefing-chip" id="briefingApprovalsText">Approvals: checking…</span>
       </div>
     </section>
 
-    <!-- Quiet Chat Transcript -->
-    <section class="chat-transcript" id="chatTranscript" aria-live="polite">
-      <!-- Conversation history dynamically rendered here -->
+    <!-- Conversation Panel -->
+    <section class="panel chat-panel" id="chatPanel">
+      <div class="panel-header">
+        <div class="panel-title-group">
+          <h2 class="panel-title">Conversation</h2>
+        </div>
+      </div>
+      <div class="chat-transcript" id="chatTranscript" aria-live="polite">
+        <div class="chat-placeholder" id="chatPlaceholder">Ask AURA or click the microphone to speak.</div>
+      </div>
     </section>
 
-    <!-- Side Panels Section -->
+    <!-- Side Panels Grid: 2 columns collapsing to 1 column below 1100px -->
     <section class="panels-grid">
       <!-- Approvals Inbox Panel -->
       <div class="panel approvals-panel" id="approvalsPanel">
@@ -116,22 +107,20 @@
         <div class="reminders-list" id="remindersList">
           <div class="empty-notice" id="remindersEmptyNotice">No reminders.</div>
         </div>
-        <div class="calendar-form-wrap">
+        <div class="panel-form-wrap">
           <div class="section-divider"></div>
           <form class="reminders-form" id="reminderForm">
             <div class="form-group">
               <label for="reminderTitle" class="form-label">Reminder Title</label>
               <input type="text" id="reminderTitle" class="form-input" placeholder="e.g. Follow up with client" required autocomplete="off" />
             </div>
-            <div class="form-row-2">
-              <div class="form-group">
-                <label for="reminderDate" class="form-label">Date</label>
-                <input type="date" id="reminderDate" class="form-input" required />
-              </div>
-              <div class="form-group">
-                <label for="reminderTime" class="form-label">Time</label>
-                <input type="time" id="reminderTime" class="form-input" required />
-              </div>
+            <div class="form-group">
+              <label for="reminderDate" class="form-label">Date</label>
+              <input type="date" id="reminderDate" class="form-input" required />
+            </div>
+            <div class="form-group">
+              <label for="reminderTime" class="form-label">Time</label>
+              <input type="time" id="reminderTime" class="form-input" required />
             </div>
             <div class="form-footer">
               <button type="submit" class="save-pref-btn" id="addReminderBtn">Add Reminder</button>
@@ -152,22 +141,20 @@
         <div class="calendar-events-list" id="calendarEventsList">
           <div class="empty-notice" id="calendarEmptyNotice">not connected</div>
         </div>
-        <div class="calendar-form-wrap">
+        <div class="panel-form-wrap">
           <div class="section-divider"></div>
           <form class="calendar-form" id="calendarForm">
             <div class="form-group">
               <label for="eventTitle" class="form-label">Event Title</label>
               <input type="text" id="eventTitle" class="form-input" placeholder="e.g. Project Sync" required autocomplete="off" />
             </div>
-            <div class="form-row-2">
-              <div class="form-group">
-                <label for="eventDate" class="form-label">Date</label>
-                <input type="date" id="eventDate" class="form-input" required />
-              </div>
-              <div class="form-group">
-                <label for="eventTime" class="form-label">Time</label>
-                <input type="time" id="eventTime" class="form-input" required />
-              </div>
+            <div class="form-group">
+              <label for="eventDate" class="form-label">Date</label>
+              <input type="date" id="eventDate" class="form-input" required />
+            </div>
+            <div class="form-group">
+              <label for="eventTime" class="form-label">Time</label>
+              <input type="time" id="eventTime" class="form-input" required />
             </div>
             <div class="form-footer">
               <button type="submit" class="save-pref-btn" id="calendarSubmitBtn">Send for Approval</button>
@@ -194,7 +181,7 @@
           <div class="empty-notice" id="gmailEmptyNotice">not connected</div>
         </div>
 
-        <!-- Draft Reply Editor (shown on Draft Reply click) -->
+        <!-- Draft Reply Editor -->
         <div class="draft-editor-wrap" id="draftEditorWrap" style="display: none;">
           <div class="section-divider"></div>
           <div class="draft-editor-header">
@@ -286,17 +273,28 @@
           </div>
         </div>
         <form class="expense-form" id="expenseForm">
-          <div class="expense-inputs-row">
-            <input type="number" id="expenseAmount" class="form-input expense-amount-input" placeholder="Amount (₹)" min="1" step="any" required />
-            <select id="expenseCategory" class="form-input expense-cat-select" required>
-              <option value="Food">Food</option>
-              <option value="Travel">Travel</option>
-              <option value="Shopping">Shopping</option>
-              <option value="Bills">Bills</option>
-              <option value="Other">Other</option>
-            </select>
-            <input type="text" id="expenseNote" class="form-input expense-note-input" placeholder="Note (e.g. lunch, petrol)" />
-            <button type="submit" class="save-pref-btn" id="addExpenseBtn">Add expense</button>
+          <div class="expense-inputs-stack">
+            <div class="form-group">
+              <label for="expenseAmount" class="form-label">Amount</label>
+              <input type="number" id="expenseAmount" class="form-input" placeholder="Amount (₹)" min="1" step="any" required />
+            </div>
+            <div class="form-group">
+              <label for="expenseCategory" class="form-label">Category</label>
+              <select id="expenseCategory" class="form-input" required>
+                <option value="Food">Food</option>
+                <option value="Travel">Travel</option>
+                <option value="Shopping">Shopping</option>
+                <option value="Bills">Bills</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="expenseNote" class="form-label">Note</label>
+              <input type="text" id="expenseNote" class="form-input" placeholder="Note (e.g. lunch, petrol)" />
+            </div>
+            <div class="form-footer">
+              <button type="submit" class="save-pref-btn" id="addExpenseBtn">Add expense</button>
+            </div>
           </div>
         </form>
         <div class="section-divider"></div>
@@ -305,7 +303,7 @@
         </div>
       </div>
 
-      <!-- Notes Panel -->
+      <!-- Notes Panel (Full Width across both grid columns) -->
       <div class="panel notes-panel" id="notesPanel">
         <div class="panel-header">
           <div class="panel-title-group">
@@ -313,30 +311,38 @@
             <span class="count-badge" id="notesCount">0</span>
           </div>
         </div>
-        <div class="notes-search-wrap">
-          <input type="text" id="notesSearchInput" class="form-input notes-search-input" placeholder="Search notes…" autocomplete="off" />
-        </div>
-        <form class="note-form" id="noteForm">
-          <div class="form-group">
-            <input type="text" id="noteTitle" class="form-input" placeholder="Title (optional)" autocomplete="off" />
+        <div class="notes-layout-grid">
+          <div class="notes-form-col">
+            <form class="note-form" id="noteForm">
+              <div class="form-group">
+                <label for="noteTitle" class="form-label">Title (optional)</label>
+                <input type="text" id="noteTitle" class="form-input" placeholder="Note title…" autocomplete="off" />
+              </div>
+              <div class="form-group">
+                <label for="noteContent" class="form-label">Content</label>
+                <textarea id="noteContent" class="form-input note-textarea" placeholder="Note content…" rows="3" required></textarea>
+              </div>
+              <div class="form-footer">
+                <button type="submit" class="save-pref-btn" id="saveNoteBtn">Save note</button>
+                <span class="pref-status-text" id="noteStatusNotice"></span>
+              </div>
+            </form>
           </div>
-          <div class="form-group">
-            <textarea id="noteContent" class="form-input note-textarea" placeholder="Note content…" rows="3" required></textarea>
+          <div class="notes-list-col">
+            <div class="notes-search-wrap">
+              <label for="notesSearchInput" class="form-label">Search</label>
+              <input type="text" id="notesSearchInput" class="form-input notes-search-input" placeholder="Search notes…" autocomplete="off" />
+            </div>
+            <div class="notes-list" id="notesList">
+              <div class="empty-notice">No notes saved.</div>
+            </div>
           </div>
-          <div class="form-footer">
-            <button type="submit" class="save-pref-btn" id="saveNoteBtn">Save note</button>
-            <span class="pref-status-text" id="noteStatusNotice"></span>
-          </div>
-        </form>
-        <div class="section-divider"></div>
-        <div class="notes-list" id="notesList">
-          <div class="empty-notice">No notes saved.</div>
         </div>
       </div>
     </section>
   </main>
 
-  <!-- Bottom Input Bar -->
+  <!-- Bottom Input Bar: Fixed, single 880px max-width container -->
   <footer class="bottom-bar">
     <div class="bottom-bar-inner">
       <form class="input-form" id="chatForm">
