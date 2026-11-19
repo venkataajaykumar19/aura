@@ -1,0 +1,31 @@
+# Environment & Secrets (NEVER COMMIT)
+.env
+.env*
+!.env.example
+
+# SQLite Databases & Ephemeral Storage (NEVER COMMIT)
+aura.db
+*.db
+*.sqlite
+*.sqlite3
+
+# Python Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+
+# Python Cache & Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+
+# Logs & Temporary Files
+*.log
+/tmp/
+
+# OS-specific Files
+.DS_Store
+Thumbs.db

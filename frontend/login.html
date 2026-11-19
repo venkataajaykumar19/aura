@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AURA — Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="login-body">
+  <div class="login-container">
+    <div class="login-card">
+      <h1 class="login-title">AURA</h1>
+      <p class="login-sub">Personal AI Assistant</p>
+      
+      <form id="loginForm" class="login-form">
+        <div class="form-group">
+          <input 
+            type="password" 
+            id="passwordInput" 
+            class="form-input login-input" 
+            placeholder="Enter password" 
+            required 
+            autofocus 
+            autocomplete="current-password"
+          />
+        </div>
+        <button type="submit" class="save-pref-btn login-btn" id="unlockBtn">Unlock</button>
+        <div id="errorMessage" class="login-error-text"></div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById("loginForm");
+    const passwordInput = document.getElementById("passwordInput");
+    const errorMessage = document.getElementById("errorMessage");
+    const unlockBtn = document.getElementById("unlockBtn");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      errorMessage.textContent = "";
+      const pw = passwordInput.value;
+      if (!pw) return;
+
+      unlockBtn.disabled = true;
+      unlockBtn.textContent = "Unlocking…";
+
+      try {
+        const res = await fetch("/api/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ password: pw })
+        });
+
+        if (res.ok) {
+          window.location.href = "/";
+        } else {
+          const data = await res.json();
+          errorMessage.textContent = data.error || "Wrong password";
+          passwordInput.value = "";
+          passwordInput.focus();
+        }
+      } catch (err) {
+        errorMessage.textContent = "Connection error. Please try again.";
+      } finally {
+        unlockBtn.disabled = false;
+        unlockBtn.textContent = "Unlock";
+      }
+    });
+  </script>
+</body>
+</html>

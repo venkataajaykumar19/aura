@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+python-dotenv
+google-genai
+google-api-python-client
+google-auth-oauthlib
+python-telegram-bot>=21.0
+APScheduler
+httpx

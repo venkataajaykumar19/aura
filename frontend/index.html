@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AURA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Top Bar: 56px, thin 1px border -->
+  <header class="top-bar">
+    <div class="top-bar-inner">
+      <div class="brand">
+        <span class="brand-title">AURA</span>
+        <span class="brand-subtitle">personal agent</span>
+      </div>
+      <div class="status-time">
+        <div class="lang-selector-wrap">
+          <select id="langSelector" class="lang-select" aria-label="Language selector">
+            <option value="en-IN">English</option>
+            <option value="kn-IN">ಕನ್ನಡ (Kannada)</option>
+            <option value="hi-IN">हिंदी (Hindi)</option>
+            <option value="te-IN">తెలుగు (Telugu)</option>
+          </select>
+        </div>
+        <span class="status-divider">·</span>
+        <div class="status-indicator" id="brainStatus" title="Brain status">
+          <span class="status-dot" id="statusDot"></span>
+          <span class="status-label" id="statusLabel">Brain ready</span>
+        </div>
+        <span class="status-divider">·</span>
+        <span class="clock" id="liveClock">--:--</span>
+        <span class="status-divider" id="logoutDivider" style="display: none;">·</span>
+        <button type="button" class="btn-logout" id="logoutBtn" style="display: none;" title="Logout">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Area: max-width 880px, centred -->
+  <main class="main-layout">
+    <!-- Voice-First Hero -->
+    <section class="voice-hero">
+      <div class="voice-state" id="voiceState">Ready</div>
+      
+      <div class="mic-circle-wrapper">
+        <button type="button" class="hero-mic-circle" id="heroMicBtn" title="Click to speak (en-IN)" aria-label="Microphone">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+            <line x1="12" y1="19" x2="12" y2="22"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="live-transcript" id="liveTranscript"></div>
+      <div class="last-reply" id="lastReply"></div>
+    </section>
+
+    <!-- Daily Briefing Panel (Below Voice Hero) -->
+    <section class="briefing-card" id="briefingPanel">
+      <div class="briefing-header">
+        <span class="briefing-title">Daily Briefing</span>
+        <span class="briefing-date" id="briefingDate">Loading date…</span>
+      </div>
+      <div class="briefing-lines">
+        <div class="briefing-row" id="briefingCalendarRow">
+          <span class="briefing-indicator"></span>
+          <span class="briefing-text" id="briefingCalendarText">Next event: checking schedule…</span>
+        </div>
+        <div class="briefing-row" id="briefingGmailRow">
+          <span class="briefing-indicator"></span>
+          <span class="briefing-text" id="briefingGmailText">Inbox: checking emails…</span>
+        </div>
+        <div class="briefing-row" id="briefingApprovalsRow">
+          <span class="briefing-indicator"></span>
+          <span class="briefing-text" id="briefingApprovalsText">Approvals: checking pending actions…</span>
+        </div>
+        <div class="briefing-row" id="briefingRemindersRow">
+          <span class="briefing-indicator"></span>
+          <span class="briefing-text" id="briefingRemindersText">Reminders: checking tasks…</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quiet Chat Transcript -->
+    <section class="chat-transcript" id="chatTranscript" aria-live="polite">
+      <!-- Conversation history dynamically rendered here -->
+    </section>
+
+    <!-- Side Panels Section -->
+    <section class="panels-grid">
+      <!-- Approvals Inbox Panel -->
+      <div class="panel approvals-panel" id="approvalsPanel">
+        <div class="panel-header">
+          <div class="panel-title-group">
+            <h2 class="panel-title">Pending Approvals</h2>
+            <span class="count-badge" id="approvalsCount">0</span>
+          </div>
+        </div>
+        <div class="approvals-inbox" id="approvalsInbox">
+          <div class="empty-notice">No pending approvals.</div>
+        </div>
+      </div>
+
+      <!-- Reminders Panel -->
+      <div class="panel reminders-panel" id="remindersPanel">
+        <div class="panel-header">
+          <div class="panel-title-group">
+            <h2 class="panel-title">Reminders</h2>
+            <span class="count-badge" id="remindersCount">0</span>
+          </div>
+        </div>
+        <div class="reminders-list" id="remindersList">
+          <div class="empty-notice" id="remindersEmptyNotice">No reminders.</div>
+        </div>
+        <div class="calendar-form-wrap">
+          <div class="section-divider"></div>
+          <form class="reminders-form" id="reminderForm">
+            <div class="form-group">
+              <label for="reminderTitle" class="form-label">Reminder Title</label>
+              <input type="text" id="reminderTitle" class="form-input" placeholder="e.g. Follow up with client" required autocomplete="off" />
+            </div>
+            <div class="form-row-2">
+              <div class="form-group">
+                <label for="reminderDate" class="form-label">Date</label>
+                <input type="date" id="reminderDate" class="form-input" required />
+              </div>
+              <div class="form-group">
+                <label for="reminderTime" class="form-label">Time</label>
+                <input type="time" id="reminderTime" class="form-input" required />
+              </div>
+            </div>
+            <div class="form-footer">
+              <button type="submit" class="save-pref-btn" id="addReminderBtn">Add Reminder</button>
+              <span class="pref-status-text" id="reminderStatusNotice"></span>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Google Calendar Panel -->
+      <div class="panel calendar-panel" id="calendarPanel">
+        <div class="panel-header">
+          <div class="panel-title-group">
+            <h2 class="panel-title">Google Calendar</h2>
+            <span class="status-badge" id="calendarStatusText">not connected</span>
+          </div>
+        </div>
+        <div class="calendar-events-list" id="calendarEventsList">
+          <div class="empty-notice" id="calendarEmptyNotice">not connected</div>
+        </div>
+        <div class="calendar-form-wrap">
+          <div class="section-divider"></div>
+          <form class="calendar-form" id="calendarForm">
+            <div class="form-group">
+              <label for="eventTitle" class="form-label">Event Title</label>
+              <input type="text" id="eventTitle" class="form-input" placeholder="e.g. Project Sync" required autocomplete="off" />
+            </div>
+            <div class="form-row-2">
+              <div class="form-group">
+                <label for="eventDate" class="form-label">Date</label>
+                <input type="date" id="eventDate" class="form-input" required />
+              </div>
+              <div class="form-group">
+                <label for="eventTime" class="form-label">Time</label>
+                <input type="time" id="eventTime" class="form-input" required />
+              </div>
+            </div>
+            <div class="form-footer">
+              <button type="submit" class="save-pref-btn" id="calendarSubmitBtn">Send for Approval</button>
+              <span class="pref-status-text" id="calendarStatusNotice"></span>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Gmail Panel -->
+      <div class="panel gmail-panel" id="gmailPanel">
+        <div class="panel-header">
+          <div class="panel-title-group">
+            <h2 class="panel-title">Gmail</h2>
+            <span class="status-badge" id="gmailStatusText">not connected</span>
+          </div>
+          <div class="panel-actions">
+            <button type="button" class="btn-quiet-action" id="gmailConnectBtn">Connect</button>
+            <button type="button" class="btn-quiet-action" id="gmailSummariseBtn" style="display: none;">Summarise</button>
+          </div>
+        </div>
+        <div class="email-summary-box" id="emailSummaryBox" style="display: none;"></div>
+        <div class="gmail-inbox" id="gmailInbox">
+          <div class="empty-notice" id="gmailEmptyNotice">not connected</div>
+        </div>
+
+        <!-- Draft Reply Editor (shown on Draft Reply click) -->
+        <div class="draft-editor-wrap" id="draftEditorWrap" style="display: none;">
+          <div class="section-divider"></div>
+          <div class="draft-editor-header">
+            <span class="draft-editor-title">Draft Reply</span>
+            <button type="button" class="btn-close-draft" id="closeDraftEditorBtn" title="Close editor">×</button>
+          </div>
+          <form class="draft-form" id="draftForm">
+            <input type="hidden" id="draftSourceEmailId" />
+            <input type="hidden" id="draftId" />
+            <div class="form-group">
+              <label for="draftInstruction" class="form-label">Reply Instruction (optional)</label>
+              <div class="instruction-row">
+                <input type="text" id="draftInstruction" class="form-input" placeholder="e.g. say yes, ask for tomorrow 3pm" />
+                <button type="button" class="btn-quiet-action" id="generateDraftBtn">Generate with AI</button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="draftTo" class="form-label">To</label>
+              <input type="email" id="draftTo" class="form-input" required />
+            </div>
+            <div class="form-group">
+              <label for="draftSubject" class="form-label">Subject</label>
+              <input type="text" id="draftSubject" class="form-input" required />
+            </div>
+            <div class="form-group">
+              <label for="draftBody" class="form-label">Body</label>
+              <textarea id="draftBody" class="form-input draft-textarea" rows="4" required></textarea>
+            </div>
+            <div class="form-footer">
+              <button type="button" class="save-pref-btn" id="saveDraftBtn">Save Draft</button>
+              <button type="button" class="btn-approve" id="sendForApprovalBtn">Send for Approval</button>
+              <span class="pref-status-text" id="draftStatusNotice"></span>
+            </div>
+          </form>
+        </div>
+
+        <!-- Drafts List below Gmail panel -->
+        <div class="drafts-section">
+          <div class="section-divider"></div>
+          <div class="drafts-header">
+            <div class="panel-title-group">
+              <span class="drafts-subtitle">Email Drafts</span>
+              <span class="count-badge" id="draftsCount">0</span>
+            </div>
+          </div>
+          <div class="drafts-list" id="draftsList">
+            <div class="empty-notice">No email drafts.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Memory & Preferences Panel -->
+      <div class="panel memory-panel" id="memoryPanel">
+        <div class="panel-header">
+          <h2 class="panel-title">Memory & Preferences</h2>
+        </div>
+        <form class="memory-form" id="memoryForm">
+          <div class="form-group">
+            <label for="prefName" class="form-label">Name</label>
+            <input type="text" id="prefName" class="form-input" placeholder="Your name" autocomplete="off" />
+          </div>
+          <div class="form-group">
+            <label for="prefLang" class="form-label">Preferred Language</label>
+            <input type="text" id="prefLang" class="form-input" placeholder="e.g. English, Hindi" autocomplete="off" />
+          </div>
+          <div class="form-footer">
+            <button type="submit" class="save-pref-btn" id="savePrefBtn">Save Preferences</button>
+            <span class="pref-status-text" id="prefStatusText"></span>
+          </div>
+        </form>
+        <div class="facts-section">
+          <div class="section-divider"></div>
+          <div class="facts-header">
+            <span class="facts-subtitle">Learned Facts</span>
+            <span class="count-badge" id="factsCount">0</span>
+          </div>
+          <div class="facts-list" id="factsList">
+            <div class="empty-notice">No learned facts yet.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Expenses Panel -->
+      <div class="panel expenses-panel" id="expensesPanel">
+        <div class="panel-header">
+          <div class="panel-title-group">
+            <h2 class="panel-title">Expenses</h2>
+            <span class="expenses-month-line" id="expensesMonthHeader">This month: ₹<span id="expensesMonthTotal">0</span></span>
+          </div>
+        </div>
+        <form class="expense-form" id="expenseForm">
+          <div class="expense-inputs-row">
+            <input type="number" id="expenseAmount" class="form-input expense-amount-input" placeholder="Amount (₹)" min="1" step="any" required />
+            <select id="expenseCategory" class="form-input expense-cat-select" required>
+              <option value="Food">Food</option>
+              <option value="Travel">Travel</option>
+              <option value="Shopping">Shopping</option>
+              <option value="Bills">Bills</option>
+              <option value="Other">Other</option>
+            </select>
+            <input type="text" id="expenseNote" class="form-input expense-note-input" placeholder="Note (e.g. lunch, petrol)" />
+            <button type="submit" class="save-pref-btn" id="addExpenseBtn">Add expense</button>
+          </div>
+        </form>
+        <div class="section-divider"></div>
+        <div class="expenses-list" id="expensesList">
+          <div class="empty-notice">No expenses logged.</div>
+        </div>
+      </div>
+
+      <!-- Notes Panel -->
+      <div class="panel notes-panel" id="notesPanel">
+        <div class="panel-header">
+          <div class="panel-title-group">
+            <h2 class="panel-title">Notes</h2>
+            <span class="count-badge" id="notesCount">0</span>
+          </div>
+        </div>
+        <div class="notes-search-wrap">
+          <input type="text" id="notesSearchInput" class="form-input notes-search-input" placeholder="Search notes…" autocomplete="off" />
+        </div>
+        <form class="note-form" id="noteForm">
+          <div class="form-group">
+            <input type="text" id="noteTitle" class="form-input" placeholder="Title (optional)" autocomplete="off" />
+          </div>
+          <div class="form-group">
+            <textarea id="noteContent" class="form-input note-textarea" placeholder="Note content…" rows="3" required></textarea>
+          </div>
+          <div class="form-footer">
+            <button type="submit" class="save-pref-btn" id="saveNoteBtn">Save note</button>
+            <span class="pref-status-text" id="noteStatusNotice"></span>
+          </div>
+        </form>
+        <div class="section-divider"></div>
+        <div class="notes-list" id="notesList">
+          <div class="empty-notice">No notes saved.</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Bottom Input Bar -->
+  <footer class="bottom-bar">
+    <div class="bottom-bar-inner">
+      <form class="input-form" id="chatForm">
+        <input 
+          type="text" 
+          id="messageInput" 
+          class="chat-input" 
+          placeholder="Ask AURA or give an instruction…" 
+          autocomplete="off"
+        />
+        <button type="button" class="bar-btn mic-btn" id="barMicBtn" title="Speak to AURA" aria-label="Microphone">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+            <line x1="12" y1="19" x2="12" y2="22"></line>
+          </svg>
+        </button>
+        <button type="button" class="bar-btn voice-toggle-btn active" id="voiceToggleBtn" title="Voice replies: ON" aria-label="Toggle voice replies">
+          <svg class="icon-svg voice-icon-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+          </svg>
+          <svg class="icon-svg voice-icon-off" style="display:none;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <line x1="23" y1="9" x2="17" y2="15"></line>
+            <line x1="17" y1="9" x2="23" y2="15"></line>
+          </svg>
+        </button>
+        <button type="submit" class="bar-btn send-btn" id="sendBtn" title="Send message" aria-label="Send">
+          <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+        </button>
+      </form>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
