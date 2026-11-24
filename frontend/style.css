@@ -63,7 +63,7 @@ html, body {
 }
 
 /* --------------------------------------------------------------------------
-   Top Bar (Sticky, Single 880px container)
+   Top Bar (Sticky, Single 880px max-width container)
    -------------------------------------------------------------------------- */
 .top-bar {
   height: 52px;
@@ -201,7 +201,7 @@ html, body {
   width: 100%;
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 18px 16px 110px 16px;
+  padding: 16px 16px 110px 16px;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -453,6 +453,25 @@ html, body {
 }
 
 /* --------------------------------------------------------------------------
+   Pending Approvals Panel (Compact Full Width)
+   -------------------------------------------------------------------------- */
+.approvals-panel {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.approvals-inbox {
+  display: flex;
+  flex-direction: column;
+  max-height: 200px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: auto;
+}
+
+/* --------------------------------------------------------------------------
    Panels Grid (2 columns on desktop, 1 column below 1100px)
    -------------------------------------------------------------------------- */
 .panels-grid {
@@ -556,16 +575,16 @@ html, body {
 }
 
 /* Scrollable Lists inside Panels */
-.approvals-inbox,
 .gmail-inbox,
 .calendar-events-list,
 .reminders-list,
 .facts-list,
 .expenses-list,
-.drafts-list {
+.drafts-list,
+.notes-list {
   display: flex;
   flex-direction: column;
-  max-height: 200px;
+  max-height: 180px;
   overflow-y: auto;
   overflow-x: hidden;
   min-height: 50px;
@@ -717,11 +736,12 @@ html, body {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 10px;
+  gap: 8px;
   padding: 8px 0;
   border-bottom: 1px solid var(--border);
   min-width: 0;
   width: 100%;
+  flex-wrap: wrap;
 }
 
 .email-item:last-child {
@@ -732,7 +752,7 @@ html, body {
   display: flex;
   flex-direction: column;
   gap: 3px;
-  flex: 1 1 auto;
+  flex: 1 1 200px;
   min-width: 0;
   overflow: hidden;
 }
@@ -1139,33 +1159,8 @@ html, body {
 }
 
 /* --------------------------------------------------------------------------
-   Notes Panel (Full Width Across Grid Columns, No Dead Black Voids)
+   Notes Panel
    -------------------------------------------------------------------------- */
-.notes-panel {
-  grid-column: 1 / -1;
-}
-
-.notes-layout-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  width: 100%;
-  min-width: 0;
-}
-
-@media (max-width: 768px) {
-  .notes-layout-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-.notes-form-col, .notes-list-col {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  min-width: 0;
-}
-
 .notes-search-wrap {
   display: flex;
   flex-direction: column;
@@ -1174,18 +1169,8 @@ html, body {
 
 .note-textarea {
   resize: vertical;
-  min-height: 70px;
-  line-height: 1.4;
-}
-
-.notes-list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  max-height: 220px;
-  overflow-y: auto;
-  overflow-x: hidden;
   min-height: 60px;
+  line-height: 1.4;
 }
 
 .note-item {
@@ -1199,6 +1184,7 @@ html, body {
   font-size: 12px;
   gap: 8px;
   min-width: 0;
+  margin-bottom: 4px;
 }
 
 .note-item-left {

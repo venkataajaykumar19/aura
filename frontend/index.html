@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=2">
+  <link rel="stylesheet" href="style.css?v=3">
 </head>
 <body>
   <!-- Top Bar: Single 880px max-width container, sticky -->
@@ -58,7 +58,7 @@
       <div class="live-transcript" id="liveTranscript"></div>
     </section>
 
-    <!-- Concise Daily Briefing Bar -->
+    <!-- Concise Daily Briefing Bar (Short One-Line Summary) -->
     <section class="briefing-bar" id="briefingPanel">
       <div class="briefing-bar-inner">
         <span class="briefing-date-badge" id="briefingDate">Today</span>
@@ -81,22 +81,22 @@
       </div>
     </section>
 
-    <!-- Side Panels Grid: 2 columns collapsing to 1 column below 1100px -->
-    <section class="panels-grid">
-      <!-- Approvals Inbox Panel -->
-      <div class="panel approvals-panel" id="approvalsPanel">
-        <div class="panel-header">
-          <div class="panel-title-group">
-            <h2 class="panel-title">Pending Approvals</h2>
-            <span class="count-badge" id="approvalsCount">0</span>
-          </div>
-        </div>
-        <div class="approvals-inbox" id="approvalsInbox">
-          <div class="empty-notice">No pending approvals.</div>
+    <!-- Pending Approvals Panel (Compact, Full Width, Prominent when Actions Awaiting) -->
+    <section class="panel approvals-panel" id="approvalsPanel">
+      <div class="panel-header">
+        <div class="panel-title-group">
+          <h2 class="panel-title">Pending Approvals</h2>
+          <span class="count-badge" id="approvalsCount">0</span>
         </div>
       </div>
+      <div class="approvals-inbox" id="approvalsInbox">
+        <div class="empty-notice">No pending approvals.</div>
+      </div>
+    </section>
 
-      <!-- Reminders Panel -->
+    <!-- Side Panels Grid: Exactly 6 panels in 3 balanced pairs; collapses to 1 column below 1100px -->
+    <section class="panels-grid">
+      <!-- Pair 1A: Reminders Panel -->
       <div class="panel reminders-panel" id="remindersPanel">
         <div class="panel-header">
           <div class="panel-title-group">
@@ -130,7 +130,7 @@
         </div>
       </div>
 
-      <!-- Google Calendar Panel -->
+      <!-- Pair 1B: Google Calendar Panel -->
       <div class="panel calendar-panel" id="calendarPanel">
         <div class="panel-header">
           <div class="panel-title-group">
@@ -164,7 +164,7 @@
         </div>
       </div>
 
-      <!-- Gmail Panel -->
+      <!-- Pair 2A: Gmail Panel -->
       <div class="panel gmail-panel" id="gmailPanel">
         <div class="panel-header">
           <div class="panel-title-group">
@@ -233,38 +233,39 @@
         </div>
       </div>
 
-      <!-- Memory & Preferences Panel -->
-      <div class="panel memory-panel" id="memoryPanel">
+      <!-- Pair 2B: Notes Panel (Paired beside Gmail, No Dead Black Voids) -->
+      <div class="panel notes-panel" id="notesPanel">
         <div class="panel-header">
-          <h2 class="panel-title">Memory & Preferences</h2>
+          <div class="panel-title-group">
+            <h2 class="panel-title">Notes</h2>
+            <span class="count-badge" id="notesCount">0</span>
+          </div>
         </div>
-        <form class="memory-form" id="memoryForm">
+        <div class="notes-search-wrap">
+          <label for="notesSearchInput" class="form-label">Search Notes</label>
+          <input type="text" id="notesSearchInput" class="form-input notes-search-input" placeholder="Search notes…" autocomplete="off" />
+        </div>
+        <form class="note-form" id="noteForm">
           <div class="form-group">
-            <label for="prefName" class="form-label">Name</label>
-            <input type="text" id="prefName" class="form-input" placeholder="Your name" autocomplete="off" />
+            <label for="noteTitle" class="form-label">Title (optional)</label>
+            <input type="text" id="noteTitle" class="form-input" placeholder="Note title…" autocomplete="off" />
           </div>
           <div class="form-group">
-            <label for="prefLang" class="form-label">Preferred Language</label>
-            <input type="text" id="prefLang" class="form-input" placeholder="e.g. English, Hindi" autocomplete="off" />
+            <label for="noteContent" class="form-label">Content</label>
+            <textarea id="noteContent" class="form-input note-textarea" placeholder="Note content…" rows="3" required></textarea>
           </div>
           <div class="form-footer">
-            <button type="submit" class="save-pref-btn" id="savePrefBtn">Save Preferences</button>
-            <span class="pref-status-text" id="prefStatusText"></span>
+            <button type="submit" class="save-pref-btn" id="saveNoteBtn">Save note</button>
+            <span class="pref-status-text" id="noteStatusNotice"></span>
           </div>
         </form>
-        <div class="facts-section">
-          <div class="section-divider"></div>
-          <div class="facts-header">
-            <span class="facts-subtitle">Learned Facts</span>
-            <span class="count-badge" id="factsCount">0</span>
-          </div>
-          <div class="facts-list" id="factsList">
-            <div class="empty-notice">No learned facts yet.</div>
-          </div>
+        <div class="section-divider"></div>
+        <div class="notes-list" id="notesList">
+          <div class="empty-notice">No notes saved.</div>
         </div>
       </div>
 
-      <!-- Expenses Panel -->
+      <!-- Pair 3A: Expenses Panel -->
       <div class="panel expenses-panel" id="expensesPanel">
         <div class="panel-header">
           <div class="panel-title-group">
@@ -303,39 +304,33 @@
         </div>
       </div>
 
-      <!-- Notes Panel (Full Width across both grid columns) -->
-      <div class="panel notes-panel" id="notesPanel">
+      <!-- Pair 3B: Memory & Preferences Panel -->
+      <div class="panel memory-panel" id="memoryPanel">
         <div class="panel-header">
-          <div class="panel-title-group">
-            <h2 class="panel-title">Notes</h2>
-            <span class="count-badge" id="notesCount">0</span>
-          </div>
+          <h2 class="panel-title">Memory & Preferences</h2>
         </div>
-        <div class="notes-layout-grid">
-          <div class="notes-form-col">
-            <form class="note-form" id="noteForm">
-              <div class="form-group">
-                <label for="noteTitle" class="form-label">Title (optional)</label>
-                <input type="text" id="noteTitle" class="form-input" placeholder="Note title…" autocomplete="off" />
-              </div>
-              <div class="form-group">
-                <label for="noteContent" class="form-label">Content</label>
-                <textarea id="noteContent" class="form-input note-textarea" placeholder="Note content…" rows="3" required></textarea>
-              </div>
-              <div class="form-footer">
-                <button type="submit" class="save-pref-btn" id="saveNoteBtn">Save note</button>
-                <span class="pref-status-text" id="noteStatusNotice"></span>
-              </div>
-            </form>
+        <form class="memory-form" id="memoryForm">
+          <div class="form-group">
+            <label for="prefName" class="form-label">Name</label>
+            <input type="text" id="prefName" class="form-input" placeholder="Your name" autocomplete="off" />
           </div>
-          <div class="notes-list-col">
-            <div class="notes-search-wrap">
-              <label for="notesSearchInput" class="form-label">Search</label>
-              <input type="text" id="notesSearchInput" class="form-input notes-search-input" placeholder="Search notes…" autocomplete="off" />
-            </div>
-            <div class="notes-list" id="notesList">
-              <div class="empty-notice">No notes saved.</div>
-            </div>
+          <div class="form-group">
+            <label for="prefLang" class="form-label">Preferred Language</label>
+            <input type="text" id="prefLang" class="form-input" placeholder="e.g. English, Hindi" autocomplete="off" />
+          </div>
+          <div class="form-footer">
+            <button type="submit" class="save-pref-btn" id="savePrefBtn">Save Preferences</button>
+            <span class="pref-status-text" id="prefStatusText"></span>
+          </div>
+        </form>
+        <div class="facts-section">
+          <div class="section-divider"></div>
+          <div class="facts-header">
+            <span class="facts-subtitle">Learned Facts</span>
+            <span class="count-badge" id="factsCount">0</span>
+          </div>
+          <div class="facts-list" id="factsList">
+            <div class="empty-notice">No learned facts yet.</div>
           </div>
         </div>
       </div>
@@ -382,6 +377,6 @@
     </div>
   </footer>
 
-  <script src="app.js"></script>
+  <script src="app.js?v=3"></script>
 </body>
 </html>

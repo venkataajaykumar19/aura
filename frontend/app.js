@@ -467,6 +467,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function appendReminderNotice(title) {
+    const placeholder = document.getElementById("chatPlaceholder");
+    if (placeholder) placeholder.remove();
+
     const el = document.createElement("div");
     el.className = "chat-message reminder-notice";
 
@@ -1966,6 +1969,13 @@ document.addEventListener("DOMContentLoaded", () => {
   function scrollToBottom() {
     if (chatTranscript) {
       chatTranscript.scrollTop = chatTranscript.scrollHeight;
+    }
+    const chatPanel = document.getElementById("chatPanel");
+    if (chatPanel) {
+      const r = chatPanel.getBoundingClientRect();
+      if (r.bottom < 80 || r.top > window.innerHeight - 80) {
+        chatPanel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
     }
   }
 
